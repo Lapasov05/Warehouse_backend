@@ -8,7 +8,6 @@ class Add_Product(BaseModel):
     price:float
     amount:int
     category_id:int
-    warehouse_id:int
 
 
 class Get_Products(BaseModel):
@@ -17,7 +16,6 @@ class Get_Products(BaseModel):
     price:float
     amount:int
     category_id:int
-    warehouse_id:int
     joined_at:datetime
 
 

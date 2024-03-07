@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth.utills import verify_token
 from database import get_async_session
-from models.models import Product, Category, User
+from models.models import Product, Category, User, Product_location
 from product.scheme import Add_Product, Get_Products, Get_categories
 
 product_root = APIRouter()
@@ -15,6 +15,7 @@ product_root = APIRouter()
 
 @product_root.post('/product/Add')
 async def add_product(model: Add_Product,
+                      warehouse_id:int,
                       token: dict = Depends(verify_token),
                       session: AsyncSession = Depends(get_async_session)):
     if token is not None:
@@ -26,8 +27,11 @@ async def add_product(model: Add_Product,
             res = await session.execute(query)
             result = res.scalar()
             if result:
-                query_insert = insert(Product).values(**dict(model))
-                await session.execute(query_insert)
+                query_insert = insert(Product).values(**dict(model)).returning(Product.id)
+                res_insert = await session.execute(query_insert)
+                product_id = res_insert.scalar()
+                query_product_location = insert(Product_location).values(warehouse_id=warehouse_id,product_id=product_id,amount=model.amount)
+                await session.execute(query_product_location)
                 await session.commit()
                 return {"success": True, "detail": "Added successfully"}
             else:

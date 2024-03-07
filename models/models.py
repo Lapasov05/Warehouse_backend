@@ -42,7 +42,6 @@ class Product(Base):
     price = Column(Float)
     amount = Column(Integer)
     category_id = Column(Integer, ForeignKey('category.id'))
-    warehouse_id = Column(Integer, ForeignKey('warehouse.id'))
     joined_at = Column(TIMESTAMP, default=datetime.utcnow)
 
 
@@ -69,6 +68,7 @@ class Shopping_cart(Base):
     id = Column(Integer, autoincrement=True, primary_key=True)
     order_id = Column(Integer, ForeignKey('order.id'))
     product_id = Column(Integer, ForeignKey('product.id'))
+    warehouse_id = Column(Integer,ForeignKey('warehouse.id'))
     amount = Column(Integer)
     total = Column(Float)
     is_active = Column(Boolean)
@@ -111,4 +111,24 @@ class Warehouse_category(Base):
     category_id = Column(ForeignKey('category.id'))
 
 
-# class Product_History(Base):
+
+class Product_History(Base):
+    __tablename__="product_history"
+    metadata=metadata
+    id= Column(Integer,primary_key=True,autoincrement=True)
+    primary_warehouse = Column(Integer)
+    next_warehouse = Column(Integer)
+    product_id = Column(Integer)
+    count = Column(Integer)
+    carried_at = Column(TIMESTAMP,default=datetime.utcnow())
+
+
+
+class Product_location(Base):
+    __tablename__="product_location"
+    metadata=metadata
+    id= Column(Integer,primary_key=True,autoincrement=True)
+    warehouse_id = Column(Integer,ForeignKey('warehouse.id'))
+    product_id = Column(Integer)
+    amount = Column(Integer)
+
